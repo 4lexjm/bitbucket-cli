@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       force_sync:
-        description: 'Forcer la synchronisation même si aucun nouveau commit n'\''est détecté'
+        description: "Forcer la synchronisation même si aucun nouveau commit n'est détecté"
         type: boolean
         default: false
 
