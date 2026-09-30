@@ -103,7 +103,7 @@ jobs:
         id: test
         env:
           BKT_OAUTH_CLIENT_ID: ci-oauth-client-id
-          BKT_OAUTH_CLIENT_SECRET: ci-oauth-client-secret
+          BKT_OAUTH_CLIENT_SECRET: ci-oauth-client-secret # gitleaks:allow
         run: |
           echo "=== 1. Vérification des skills ==="
           make check-skills
