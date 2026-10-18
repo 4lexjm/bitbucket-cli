@@ -6,6 +6,63 @@ All notable changes to this project will be documented here. The format follows
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-10-15
+### Added
+- `bkt auth login --with-token` reads the token from stdin, so a script signs
+  in without the token showing in the process list.
+
+
+## [0.33.1] - 2026-10-13
+### Added
+- `bkt` is in Homebrew core: `brew install bitbucket-cli`. The
+  `avivsinai/tap` formula remains the official binary with Bitbucket Cloud
+  OAuth built in.
+
+### Fixed
+- `bkt auth doctor` and the README name the right Homebrew upgrade command
+  (`brew upgrade bitbucket-cli`).
+
+
+## [0.33.0] - 2026-10-11
+### Added
+- `bkt repo downloads upload <files>...` uploads files to a Bitbucket Cloud
+  repository's Downloads and prints their URLs; `bkt repo downloads list` lists
+  them (#331).
+- `bkt pr comments view <id> <comment-id>` shows the thread that contains a
+  comment or reply: root comment, replies, and inline anchor on Data Center
+  and Cloud, plus a few lines of diff around the anchored line on Data Center
+  (#326).
+- `BKT_KEYRING_COLLECTION` environment variable overrides the Secret Service
+  collection used by the keyring backend on Linux. Users whose Secret Service
+  provider creates a separately encrypted wallet per collection (for example
+  KWallet) can set it to the provider's default collection name so `bkt`
+  reuses the session's already-unlocked wallet instead of prompting on every
+  invocation. When unset, behavior is unchanged: the collection falls back to
+  the `bkt` service name as before. The variable is ignored on macOS and
+  Windows. Packagers may bake the value in via the
+  `github.com/avivsinai/bitbucket-cli/internal/secret.defaultKeyringCollection`
+  ldflags variable; the env var wins when set (#327).
+
+### Changed
+- Building from source now requires Go 1.26 (`go.mod` declares `go 1.26.0`),
+  with `golang.org/x/sys` 0.48, `golang.org/x/term` 0.46, and the MCP Go SDK
+  1.8.0 (#333).
+
+### Fixed
+- `bkt repo downloads upload` and `bkt issue attachment upload` stream files
+  to Bitbucket instead of buffering the whole multipart body in memory, so
+  large release artifacts no longer need as much RAM as their size. Uploads
+  still send an exact `Content-Length` and are retried on 429 and token
+  refresh as before.
+- `bkt repo downloads upload` prints each URL as soon as its file is uploaded;
+  when a later file fails, the URLs of files already uploaded are still
+  reported (in `--json` output too) before the command exits with the error.
+- Data Center pull request comments retain the activities endpoint's inline
+  anchor: `pr comments --details` shows file, line, and orphaned status, JSON
+  includes anchor metadata, and the MCP `bkt_list_pull_request_comments` tool
+  returns path and line (#326).
+
+
 ## [0.32.1] - 2026-09-04
 ### Added
 - Carried forward from the unpublished `v0.32.0` tag: `bkt skill` now supports
@@ -747,7 +804,10 @@ All notable changes to this project will be documented here. The format follows
 ## [0.1.0] - 2025-10-26
 - Initial public release of `bkt`.
 
-[Unreleased]: https://github.com/avivsinai/bitbucket-cli/compare/v0.32.1...HEAD
+[Unreleased]: https://github.com/avivsinai/bitbucket-cli/compare/v0.34.0...HEAD
+[0.34.0]: https://github.com/avivsinai/bitbucket-cli/compare/v0.33.1...v0.34.0
+[0.33.1]: https://github.com/avivsinai/bitbucket-cli/compare/v0.33.0...v0.33.1
+[0.33.0]: https://github.com/avivsinai/bitbucket-cli/compare/v0.32.1...v0.33.0
 [0.32.1]: https://github.com/avivsinai/bitbucket-cli/compare/v0.32.0...v0.32.1
 [0.32.0]: https://github.com/avivsinai/bitbucket-cli/compare/v0.31.1...v0.32.0
 [0.31.1]: https://github.com/avivsinai/bitbucket-cli/compare/v0.31.0...v0.31.1
